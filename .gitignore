@@ -1,0 +1,3 @@
+mrx/settings.py
+*.pyx
+**/__pycache__/
