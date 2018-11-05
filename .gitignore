@@ -1,3 +1,4 @@
 mrx/settings.py
 *.pyx
 **/__pycache__/
+.idea/
