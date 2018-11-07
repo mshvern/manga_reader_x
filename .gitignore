@@ -2,3 +2,5 @@ mrx/settings.py
 *.pyx
 **/__pycache__/
 .idea/
+static/
+reader/static/
