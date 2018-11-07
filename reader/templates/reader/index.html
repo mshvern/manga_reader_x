@@ -7,6 +7,11 @@
     <title>Manga Reader</title>
 </head>
 <body>
+{% for key, value in dirs.items %}
+{% if not value %}
+<img src="{% static key %}" alt="Manga Page">
+{% endif %}
+{% endfor %}
 <img src="{% static "{{ page }}" %}" alt="Manga Page">
 </body>
 </html>
