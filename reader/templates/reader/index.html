@@ -1,17 +1,91 @@
 {% load static %}
 <!DOCTYPE html>
-<!--suppress HtmlUnknownAttribute -->
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Manga Reader</title>
 </head>
+
 <body>
-{% for key, value in dirs.items %}
-{% if not value %}
-<img src="{% static key %}" alt="Manga Page">
-{% endif %}
-{% endfor %}
-<img src="{% static "{{ page }}" %}" alt="Manga Page">
+    <style>
+        .file {
+            color: red;
+        }
+
+        .directory {
+            color: blue;
+        }
+        .directory .file{
+            display: none;
+        }
+    </style>
+    {% if page %}
+    <div class="imageDisplay">
+        <img src="{% static page %}" alt="Manga Page">
+    </div>
+    {% endif %}
+    <ul id='explorer'></ul>
+    <script>
+        let explorer = document.getElementById("explorer");
+
+        function appendFileToRoot(file, isDirectory) {
+            let parents = file.split('/')
+            let fileName = parents.pop()
+            let parent = document.getElementById(parents.join('/'))
+            let newElement = document.createElement("li")
+            newElement.appendChild(document.createTextNode(fileName))
+            if (isDirectory) {
+                let newElementContents = document.createElement("ul")
+                newElementContents.id = file
+                newElement.appendChild(newElementContents)
+                newElement.className = "directory"
+            } else {
+                newElement.className = "file"
+                newElement.id = file
+            }
+
+            if (parent) {
+                parent.appendChild(newElement)
+            } else {
+                explorer.appendChild(newElement)
+            }
+        }
+
+        function renderDir(dir) {
+            for (let file in dir) {
+                if (dir[file]) {
+                    appendFileToRoot(file, true)
+                    renderDir(dir[file])
+                } else
+                    appendFileToRoot(file, false)
+            }
+        }
+
+        function addEventListenerByClass(cls, eventName, handler) {
+            let classElements = document.getElementsByClassName(cls)
+            for (var i = 0; i < classElements.length; i++) {
+                classElements[i].addEventListener(eventName, handler)
+            }
+        }
+
+        function goToPage(page){
+            const url = new URL(window.location.href);
+            window.location.href = `${url.origin}/?page=${page}`
+        }
+
+        let dirs = {{ dirs|safe }}
+        renderDir(dirs)
+
+        addEventListenerByClass('directory', 'click', (event) => {
+            alert("clicked a directory")
+        });
+        addEventListenerByClass('file', 'click', (event) => {
+            event.stopPropagation()
+            goToPage(event.target.id)
+        });
+        addEventListener
+    </script>
 </body>
+
 </html>

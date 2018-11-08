@@ -1,3 +1,4 @@
+import json
 import os
 
 from django.views.generic import View
@@ -24,4 +25,11 @@ class MainView(View):
     template_name = "reader/index.html"
 
     def get(self, request, *args, **kwargs):
-        return render(request, template_name=self.template_name, context={"dirs": get_directory_as_nested_dict(manga_path)})
+        context = {
+            "dirs": json.dumps(get_directory_as_nested_dict(manga_path))
+        }
+
+        if request.GET.get('page') and os.path.exists(os.path.join(settings.STATIC_ROOT, request.GET['page'])):
+            context['page'] = request.GET['page']
+
+        return render(request, template_name=self.template_name, context=context)
